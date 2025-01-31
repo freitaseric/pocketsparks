@@ -24,3 +24,9 @@ jobs:
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/*.apk
+      - name: Get latest artifact URL
+        id: get_artifact_url
+        run: |
+            sudo apt-get update && sudo apt-get install -y jq
+            ARTIFACT_URL=$(curl -s "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" | jq -r '.artifacts[0].url')
+            echo "::set-output name=url::$ARTIFACT_URL"

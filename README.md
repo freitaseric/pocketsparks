@@ -17,11 +17,21 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 2rem;"
+            gap: 1.5rem;"
         >
         <img alt="GitHub forks" src="https://img.shields.io/github/forks/freitaseric/pocketsparks">
-        <img alt="GitHub License" src="https://img.shields.io/github/license/freitaseric/pocketsparks">
         <img alt="GitHub forks" src="https://img.shields.io/github/forks/freitaseric/pocketsparks">
+    </div>
+        <div
+        style="
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;"
+        >
+        <img alt="GitHub License" src="https://img.shields.io/github/license/freitaseric/pocketsparks">
+        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/freitaseric/pocketsparks/build.yml">
     </div>
     <h3 style="font-weight: bold;">PocketSparks, the IDE that fits in your pocket.</h3>
 </div>
@@ -36,7 +46,11 @@
 ## Installation
 
 > [!WARNING]
-> The app is currently in development. Please wait for the release.
+> PocketSparks doesn't have an official release yet.
+> However, you can install the latest debug version through the workflow artifacts.
+
+Click [here](\${{ steps.get_artifact_url.outputs.url }}) to download
+the latest debug version.
 
 ## Documentation
 
