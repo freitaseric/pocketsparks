@@ -49,9 +49,6 @@
 > PocketSparks doesn't have an official release yet.
 > However, you can install the latest debug version through the workflow artifacts.
 
-Click [here](\${{ steps.get_artifact_url.outputs.url }}) to download
-the latest debug version.
-
 ## Documentation
 
 > [!WARNING]
