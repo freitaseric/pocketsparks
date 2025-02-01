@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PocketSparks</string>
+    <string name="text">Exemplo de um scaffold com uma barra de aplicativos inferior.</string>
+    <string name="bottomBar_action_edit_description">Abrir seletor de área de trabalho</string>
+    <string name="bottomBar_action_search_description">Abrir modal de pesquisa</string>
+    <string name="bottomBar_action_settings_description">Abrir menu de ajustes</string>
+</resources>

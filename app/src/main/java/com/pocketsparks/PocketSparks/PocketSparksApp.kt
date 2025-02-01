@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pocketsparks.PocketSparks.ui.theme.PocketSparksTheme
@@ -26,19 +27,22 @@ fun PocketSparksApp() = PocketSparksTheme {
             BottomAppBar(actions = {
                 IconButton(onClick = { /* do something */ }) {
                     Icon(
-                        Icons.Filled.Edit, contentDescription = "Open workspace selector menu"
+                        Icons.Filled.Edit,
+                        contentDescription = stringResource(R.string.bottomBar_action_edit_description)
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = { /* do something */ }) {
                     Icon(
-                        Icons.Filled.Search, contentDescription = "Open search modal",
+                        Icons.Filled.Search,
+                        contentDescription = stringResource(R.string.bottomBar_action_search_description),
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = { /* do something */ }) {
                     Icon(
-                        Icons.Filled.Settings, contentDescription = "Open settings menu",
+                        Icons.Filled.Settings,
+                        contentDescription = stringResource(R.string.bottomBar_action_settings_description),
                     )
                 }
             }, contentPadding = PaddingValues(12.dp, 0.dp))
@@ -46,7 +50,7 @@ fun PocketSparksApp() = PocketSparksTheme {
     ) { innerPadding ->
         Text(
             modifier = Modifier.padding(innerPadding),
-            text = "Example of a scaffold with a bottom app bar."
+            text = stringResource(R.string.text)
         )
     }
 }

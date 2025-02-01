@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PocketSparks</string>
+    <string name="text">Example of a scaffold with a bottom app bar.</string>
+    <string name="bottomBar_action_edit_description">Open workspace selector menu</string>
+    <string name="bottomBar_action_search_description">Open search modal</string>
+    <string name="bottomBar_action_settings_description">Open settings menu</string>
 </resources>
