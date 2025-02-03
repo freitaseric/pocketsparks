@@ -16,25 +16,27 @@ import androidx.compose.ui.unit.dp
 import com.pocketsparks.PocketSparks.R
 
 @Composable
-fun PocketSparksBottomBar() = BottomAppBar(actions = {
-    IconButton(onClick = { /* do something */ }) {
-        Icon(
-            Icons.Filled.Edit,
-            contentDescription = stringResource(R.string.bottomBar_action_edit_description)
-        )
-    }
-    Spacer(modifier = Modifier.weight(1f))
-    IconButton(onClick = { /* do something */ }) {
-        Icon(
-            Icons.Filled.Search,
-            contentDescription = stringResource(R.string.bottomBar_action_search_description),
-        )
-    }
-    Spacer(modifier = Modifier.weight(1f))
-    IconButton(onClick = { /* do something */ }) {
-        Icon(
-            Icons.Filled.Settings,
-            contentDescription = stringResource(R.string.bottomBar_action_settings_description),
-        )
-    }
-}, contentPadding = PaddingValues(12.dp, 0.dp))
+fun PocketSparksBottomBar(onSettingsClick: () -> Unit) {
+    BottomAppBar(actions = {
+        IconButton(onClick = { /* do something */ }) {
+            Icon(
+                Icons.Filled.Edit,
+                contentDescription = stringResource(R.string.bottomBar_action_edit_description)
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = { /* do something */ }) {
+            Icon(
+                Icons.Filled.Search,
+                contentDescription = stringResource(R.string.bottomBar_action_search_description),
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = onSettingsClick) {
+            Icon(
+                Icons.Filled.Settings,
+                contentDescription = stringResource(R.string.bottomBar_action_settings_description),
+            )
+        }
+    }, contentPadding = PaddingValues(12.dp, 0.dp))
+}

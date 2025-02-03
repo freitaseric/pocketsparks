@@ -5,4 +5,7 @@
     <string name="bottomBar_action_edit_description">Abrir seletor de área de trabalho</string>
     <string name="bottomBar_action_search_description">Abrir modal de pesquisa</string>
     <string name="bottomBar_action_settings_description">Abrir menu de ajustes</string>
+    <string name="settingsSheet_title">Configurações</string>
+    <string name="settingsSheet_option_language">Mudar idioma:</string>
+    <string name="settingsSheet_option_language_iconDescription">Clique para ir à página de configuração de idiomas do aplicativo nas configurações do android.</string>
 </resources>

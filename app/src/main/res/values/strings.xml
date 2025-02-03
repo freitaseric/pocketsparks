@@ -4,4 +4,7 @@
     <string name="bottomBar_action_edit_description">Open workspace selector menu</string>
     <string name="bottomBar_action_search_description">Open search modal</string>
     <string name="bottomBar_action_settings_description">Open settings menu</string>
+    <string name="settingsSheet_title">Settings</string>
+    <string name="settingsSheet_option_language">Change app language:</string>
+    <string name="settingsSheet_option_language_iconDescription">Click to go to android app language settings page.</string>
 </resources>
