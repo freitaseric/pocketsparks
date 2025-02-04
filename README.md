@@ -20,7 +20,7 @@
             gap: 1.5rem;"
         >
         <img alt="GitHub forks" src="https://img.shields.io/github/forks/freitaseric/pocketsparks">
-        <img alt="GitHub forks" src="https://img.shields.io/github/forks/freitaseric/pocketsparks">
+        <img alt="GitHub forks" src="https://img.shields.io/github/stars/freitaseric/pocketsparks">
     </div>
         <div
         style="
