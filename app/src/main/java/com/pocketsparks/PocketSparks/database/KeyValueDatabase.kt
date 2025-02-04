@@ -5,10 +5,10 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
-import androidx.core.database.sqlite.transaction
-import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class KeyValueDatabase(context: Context, val table: String, val version: Int = 1) :
+class KeyValueDatabase(context: Context, private val table: String, val version: Int = 1) :
     SQLiteOpenHelper(context, "$table.db", null, version) {
     companion object {
         const val COLUMN_KEY = "key"
@@ -37,62 +37,110 @@ class KeyValueDatabase(context: Context, val table: String, val version: Int = 1
         }
     }
 
-    fun set(key: String, value: Any) {
-        val values = ContentValues().apply {
-            put(COLUMN_KEY, key)
-            put(COLUMN_VALUE, value.toString())
-        }
-        writableDatabase.transaction {
-            writableDatabase.insertWithOnConflict(
-                table, null, values, SQLiteDatabase.CONFLICT_REPLACE
-            )
-            writableDatabase.close()
+    suspend fun set(key: String, value: Any): Long? = withContext(Dispatchers.IO) {
+        val db = writableDatabase
+        return@withContext try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(COLUMN_KEY, key)
+                put(COLUMN_VALUE, value.toString())
+            }
+            val insertId =
+                db.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE)
+            db.setTransactionSuccessful()
+            insertId
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            db.endTransaction()
+            db.close()
         }
     }
 
-    fun getString(key: String): String? {
-        readableDatabase.transaction {
+    suspend fun getString(key: String): String? = withContext(Dispatchers.IO) {
+        val db = readableDatabase
+        return@withContext try {
             val cursor = readableDatabase.query(
                 table, arrayOf(COLUMN_VALUE), "$COLUMN_KEY = ?", arrayOf(key), null, null, null
             )
             var value: String? = null
-            if (cursor.moveToFirst()) {
-                value = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_VALUE))
+            cursor.use {
+                when {
+                    it.moveToFirst() -> {
+                        value = it.getString(it.getColumnIndexOrThrow(COLUMN_VALUE))
+                    }
+                }
             }
-            cursor.close()
-            readableDatabase.close()
-            return value
+            value
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            db.close()
         }
     }
 
-    fun getInt(key: String): Int? {
-        readableDatabase.transaction {
+    suspend fun getInt(key: String): Int? = withContext(Dispatchers.IO) {
+        val db = readableDatabase
+        return@withContext try {
             val cursor = readableDatabase.query(
                 table, arrayOf(COLUMN_VALUE), "$COLUMN_KEY = ?", arrayOf(key), null, null, null
             )
             var value: Int? = null
-            if (cursor.moveToFirst()) {
-                value = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_VALUE))
+            cursor.use {
+                when {
+                    it.moveToFirst() -> {
+                        value = it.getInt(it.getColumnIndexOrThrow(COLUMN_VALUE))
+                    }
+                }
             }
-            cursor.close()
-            readableDatabase.close()
-            return value
+            value
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            db.close()
         }
     }
 
-    fun getUri(key: String): Uri? {
-        readableDatabase.transaction {
+    suspend fun getUri(key: String): Uri? = withContext(Dispatchers.IO) {
+        val db = readableDatabase
+        return@withContext try {
             val cursor = readableDatabase.query(
                 table, arrayOf(COLUMN_VALUE), "$COLUMN_KEY = ?", arrayOf(key), null, null, null
             )
             var value: Uri? = null
-            if (cursor.moveToFirst()) {
-                val valueAsString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_VALUE))
-                value = Uri.fromFile(File(valueAsString))
+            cursor.use {
+                when {
+                    it.moveToFirst() -> {
+                        val valueAsString = it.getString(it.getColumnIndexOrThrow(COLUMN_VALUE))
+                        value = Uri.parse(valueAsString)
+                    }
+                }
             }
-            cursor.close()
-            readableDatabase.close()
-            return value
+            value
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            db.close()
+        }
+    }
+
+    suspend fun delete(key: String): Int = withContext(Dispatchers.IO) {
+        val db = writableDatabase
+        return@withContext try {
+            db.beginTransaction()
+            val rowsAffected = db.delete(table, "$COLUMN_VALUE = ?", arrayOf(key))
+            db.setTransactionSuccessful()
+            rowsAffected
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
+        } finally {
+            db.endTransaction()
+            db.close()
         }
     }
 }
