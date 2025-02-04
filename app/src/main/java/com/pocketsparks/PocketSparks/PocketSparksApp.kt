@@ -13,10 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.pocketsparks.PocketSparks.ui.components.PocketSparksBottomBar
-import com.pocketsparks.PocketSparks.ui.components.PocketSparksSettingsModal
+import com.pocketsparks.PocketSparks.database.KeyValueDatabase
+import com.pocketsparks.PocketSparks.ui.component.PocketSparksBottomBar
+import com.pocketsparks.PocketSparks.ui.component.PocketSparksSettingsSheet
 import com.pocketsparks.PocketSparks.ui.theme.PocketSparksTheme
 import kotlinx.coroutines.launch
 
@@ -24,6 +26,8 @@ import kotlinx.coroutines.launch
 @Preview(showBackground = true)
 @Composable
 fun PocketSparksApp() {
+    val context = LocalContext.current
+    val settings = remember { KeyValueDatabase(context, "settings") }
     val coroutineScope = rememberCoroutineScope()
 
     val settingsSheetState = rememberModalBottomSheetState()
@@ -46,7 +50,7 @@ fun PocketSparksApp() {
                 ModalBottomSheet(
                     onDismissRequest = { isSettingsModalVisible = false },
                 ) {
-                    PocketSparksSettingsModal()
+                    PocketSparksSettingsSheet()
                 }
             }
         }
