@@ -6,12 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.outlined.Close
@@ -19,9 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +39,11 @@ import com.pocketsparks.PocketSparks.database.KeyValueDatabase
 import kotlinx.coroutines.launch
 
 @Composable
-fun PocketSparksExplorerDrawer(settings: KeyValueDatabase, onDismissRequest: () -> Unit) {
+fun PocketSparksExplorerDrawer(
+    settings: KeyValueDatabase,
+    onDismissRequest: () -> Unit,
+    openFileEditor: (file: DocumentFile) -> Unit
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var treeData by remember { mutableStateOf<List<TreeItem>>(emptyList()) }
@@ -61,14 +68,7 @@ fun PocketSparksExplorerDrawer(settings: KeyValueDatabase, onDismissRequest: () 
                     Icon(Icons.Outlined.Close, contentDescription = "Close Drawer")
                 }
             }
-            TextButton(onClick = {
-                coroutineScope.launch {
-                    settings.delete("folderUri")
-                }
-            }) {
-                Text(text = "Apagar Cache")
-            }
-            TreeView(data = treeData)
+            TreeView(data = treeData, openFileEditor)
         }
     }
 }
@@ -76,56 +76,74 @@ fun PocketSparksExplorerDrawer(settings: KeyValueDatabase, onDismissRequest: () 
 data class TreeItem(
     val name: String,
     val children: List<TreeItem> = emptyList(),
-    var isExpanded: Boolean = false,
-    val file: DocumentFile? = null
+    var isExpanded: MutableState<Boolean> = mutableStateOf(false),
+    val file: DocumentFile? = null,
+    val isDirectory: Boolean = file?.isDirectory == true,
+    val level: Int = 0
 )
 
 fun buildTree(context: Context, uri: Uri): List<TreeItem> {
     val folder = DocumentFile.fromTreeUri(context, uri) ?: return emptyList()
 
-    return listOf(buildTreeItem(folder))
+    return listOf(buildTreeItem(folder, 0))
 }
 
-fun buildTreeItem(file: DocumentFile): TreeItem {
+fun buildTreeItem(file: DocumentFile, level: Int): TreeItem {
     val children = mutableListOf<TreeItem>()
 
     if (file.isDirectory) {
         val files = file.listFiles()
         for (child in files) {
-            children.add(buildTreeItem(child))
+            children.add(buildTreeItem(child, level + 1))
         }
     }
 
     return TreeItem(
-        file.name!!, children, file = file
+        file.name!!, children, file = file, level = level
     )
 }
 
 @Composable
-fun TreeView(data: List<TreeItem>) {
+fun TreeView(data: List<TreeItem>, openFileEditor: (file: DocumentFile) -> Unit) {
     LazyColumn {
         items(data) { item ->
-            TreeItemRow(item)
+            TreeItemRow(item, openFileEditor)
         }
     }
 }
 
 @Composable
-fun TreeItemRow(item: TreeItem) {
+fun TreeItemRow(item: TreeItem, openFileEditor: (file: DocumentFile) -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
-        .clickable { item.isExpanded = !item.isExpanded }
-        .padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = if (item.isExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-            contentDescription = if (item.isExpanded) "Contrair" else "Expandir"
-        )
+        .clickable {
+            if (item.isDirectory) {
+                item.isExpanded.value = !item.isExpanded.value
+            } else {
+                if (item.file != null) {
+                    openFileEditor(item.file)
+                }
+            }
+        }
+        .padding(1.dp), verticalAlignment = Alignment.CenterVertically) {
+        Spacer(modifier = Modifier.width((item.level * 16).dp))
+
+        if (item.isDirectory) {
+            Icon(
+                imageVector = if (item.isExpanded.value) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                contentDescription = if (item.isExpanded.value) "Contrair" else "Expandir"
+            )
+        } else {
+            Spacer(modifier = Modifier.width(16.dp))
+            Icon(Icons.AutoMirrored.Outlined.InsertDriveFile, contentDescription = "File")
+        }
+
         Text(text = item.name)
     }
 
-    if (item.isExpanded) {
+    if (item.isExpanded.value) {
         item.children.forEach { child ->
-            TreeItemRow(child)
+            TreeItemRow(child, openFileEditor)
         }
     }
 }
